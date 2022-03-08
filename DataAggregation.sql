@@ -104,3 +104,31 @@ SELECT `department_id`, MAX(`salary`) AS 'third_highest_salary'
 FROM `employees`
 GROUP BY `department_id`
 LIMIT 3;
+
+SELECT `department_id`, SUM(`salary`) AS 'total_salary'
+FROM `employees`
+GROUP BY `department_id`
+ORDER BY `department_id`;
+
+SELECT e.`department_id`,
+( SELECT DISTINCT e2.`salary` FROM `employees` AS e2
+	WHERE e2.`department_id` = e.`department_id`
+    ORDER BY e2.`salary` DESC
+    LIMIT 2, 1
+) AS 'third_highest_salary'
+FROM `employees` AS e
+GROUP BY e.`department_id`
+HAVING `third_highest_salary` IS NOT NULL
+ORDER BY `department_id`;
+
+
+SELECT e.`first_name`, e.`last_name`, e.`department_id`
+FROM `employees` AS e
+WHERE
+	 `salary` > (SELECT AVG(e2.`salary`) AS 'average'
+     FROM `employees` AS e2
+     WHERE e.`department_id` = e2.`department_id`
+    GROUP BY e2.`department_id`)
+    ORDER BY `department_id`, `employee_id`
+    LIMIT 10;
+						
