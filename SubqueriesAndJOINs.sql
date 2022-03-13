@@ -66,3 +66,11 @@ JOIN `projects` AS p
 ON ep.project_id = p.project_id
 WHERE ep.employee_id = 24
 ORDER BY p.name;
+
+
+SELECT e.`employee_id`, e.`first_name`, e.`manager_id` AS 'manager_name', m.`first_name`
+FROM `employees` AS e
+JOIN `employees` AS m
+ON m.employee_id = e.manager_id
+WHERE e.manager_id IN (3,7)
+ORDER BY e.first_name;
