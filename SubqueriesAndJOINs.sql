@@ -74,3 +74,41 @@ JOIN `employees` AS m
 ON m.employee_id = e.manager_id
 WHERE e.manager_id IN (3,7)
 ORDER BY e.first_name;
+
+SELECT e.`employee_id`, CONCAT(e.`first_name`, ' ', e.`last_name`), CONCAT(m.`first_name`, ' ', m.`last_name`), d.`name`
+FROM `employees` AS e
+JOIN `employees` AS m
+ON m.employee_id = e.manager_id
+JOIN `departments` AS d
+ON e.department_id = d.department_id
+ORDER BY e.employee_id
+LIMIT 5;
+
+SELECT MIN(AverageSalary.avg) AS 'min_average_salary'
+FROM (
+	SELECT AVG(e.`salary`) AS 'avg'
+    FROM `employees` AS e
+    GROUP BY e.department_id
+    ) AS AverageSalary;
+    
+
+
+SELECT mc.`country_code`, m.`mountain_range`, p.`peak_name`, p.`elevation`
+FROM `peaks` AS p
+JOIN `mountains_countries` AS mc
+ON p.mountain_id = mc.mountain_id
+JOIN `mountains` AS m
+ON m.id = p.mountain_id
+WHERE mc.country_code = 'BG' AND p.elevation > 2835
+ORDER BY p.elevation DESC;
+
+
+SELECT mc.`country_code`, COUNT(`mountain_id`) AS 'count'
+FROM `mountains_countries` AS mc
+JOIN `mountains` AS m
+ON mc.mountain_id = m.id
+JOIN `countries` AS c
+ON c.country_code = mc.country_code
+WHERE c.country_name IN ('United States', 'Russia', 'Bulgaria')
+GROUP BY mc.country_code
+ORDER BY count DESC;
