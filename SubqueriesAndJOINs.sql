@@ -112,3 +112,39 @@ ON c.country_code = mc.country_code
 WHERE c.country_name IN ('United States', 'Russia', 'Bulgaria')
 GROUP BY mc.country_code
 ORDER BY count DESC;
+
+SELECT c.`country_name`, r.`river_name` 
+FROM `countries` AS c
+LEFT JOIN `countries_rivers` AS cr
+ON cr.country_code = c.country_code
+LEFT JOIN `rivers` AS r
+ON r.id = cr.river_id
+WHERE c.continent_code = 'AF'
+ORDER BY c.country_name
+LIMIT 5;
+
+
+SELECT COUNT(*) 
+FROM `countries` AS c
+LEFT JOIN `mountains_countries` AS mc
+ON c.country_code = mc.country_code
+WHERE mc.mountain_id IS NULL;
+
+
+SELECT c.`country_name`, MAX(p.elevation) AS 'highest_peak_elevation', MAX(r.length) AS 'longest_river_length'
+FROM `mountains_countries` AS mc
+JOIN `countries` AS c
+ON mc.country_code = c.country_code
+JOIN `mountains` AS m
+ON mc.mountain_id = m.id
+JOIN `peaks` AS p
+ON p.mountain_id = m.id
+JOIN `countries_rivers` AS cr
+ON cr.country_code = c.country_code
+JOIN `rivers` AS r
+ON r.id = cr.river_id
+GROUP BY c.country_name
+ORDER BY highest_peak_elevation DESC,
+longest_river_length DESC,
+c.country_name
+LIMIT 5;
