@@ -61,9 +61,20 @@ CREATE TABLE `orders_products`(
     REFERENCES products(id)
 );
 
+INSERT INTO `reviews`(content, picture_url, published_at, rating)
+SELECT LEFT(`description`, 15), reverse(`name`), '2010-10-10', price / 8
+FROM products
+WHERE id >=5;
+
 UPDATE `products`
 SET quantity_in_stock = quantity_in_stock - 5
 WHERE quantity_in_stock BETWEEN 60 AND 70;
+
+DELETE FROM `customers` AS c
+LEFT JOIN `orders` AS o
+ON c.id = o.customer_id
+WHERE o.id IS NULL
+
 
 SELECT id, `name`
 FROM `categories`
@@ -101,10 +112,19 @@ LIMIT 5;
 DELIMITER $$
 CREATE FUNCTION udf_customer_products_count(name_param VARCHAR(30))
 RETURNS INT
+DETERMINISTIC
 BEGIN
-	
+	RETURN (SELECT  COUNT(*) 
+    FROM `customers` AS c
+    JOIN `orders` AS o
+    ON c.id = o.customer_id
+    JOIN `orders_products` AS ap
+    ON o.id = ap.order_id
+	WHERE c.first_name = name_param
+    GROUP BY c.id);
 END$$
 DELIMITER ;
+SELECT udf_customer_products_count('Shirley');
 
 SELECT c.first_name,c.last_name, udf_customer_products_count('Shirley') as `total_products` FROM customers c
 WHERE c.first_name = 'Shirley';
